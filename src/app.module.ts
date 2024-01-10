@@ -10,6 +10,10 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ThrottlerFilter } from './common/filters/throttlerExeptionFilter/throttlerExeptionFilter';
 import { Users } from './users/schema/user.entity';
+import { RolesGuard } from './common/guards/role.guard';
+import { TasksModule } from './tasks/tasks.module';
+import { Tasks } from './tasks/schema/tasks.entity';
+import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
   imports: [
@@ -23,13 +27,15 @@ import { Users } from './users/schema/user.entity';
         username: configService.get('DATABASE_USER'),
         password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_NAME'),
-        entities: [Users],
+        entities: [Users, Tasks],
         synchronize: true,
       }),
       inject: [ConfigService],
     }),
     UsersModule,
+    TasksModule,
     AuthModule,
+    CqrsModule,
     ThrottlerModule.forRoot([
       {
         ttl: 5000,

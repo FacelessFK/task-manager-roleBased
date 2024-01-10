@@ -1,9 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { UsersService } from './users.service';
 
 @Controller('users')
-export class UsersController {
-  @Get()
-  findAll(): string {
-    return 'This action returns all users';
-  }
-}
+export class UsersController {}

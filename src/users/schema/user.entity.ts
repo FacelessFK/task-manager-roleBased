@@ -1,20 +1,23 @@
 import { PasswordTransformer } from 'src/common/helper/password.transformer';
-import { IsUnique } from 'src/common/validator/unique.validator';
+
 import { UserRole } from 'src/enums/role.enum';
+import { Tasks } from 'src/tasks/schema/tasks.entity';
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity({ name: 'users' })
-export class Users {
-  @PrimaryGeneratedColumn()
+export class Users extends BaseEntity {
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
-  @IsUnique()
   @Column()
   username: string;
 
@@ -23,13 +26,16 @@ export class Users {
 
   @Column({
     name: 'password',
-    length: 255,
     // this is for the password encryption
     transformer: new PasswordTransformer(),
   })
   password: string;
 
-  @Column({ default: UserRole.USER })
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.USER,
+  })
   role: UserRole;
 
   @CreateDateColumn({ name: 'create_time', nullable: true })
@@ -47,4 +53,8 @@ export class Users {
   }
 
   /*                                foreign key                                */
+
+  @OneToMany(() => Tasks, (task) => task.user)
+  @JoinTable()
+  tasks: Tasks[];
 }

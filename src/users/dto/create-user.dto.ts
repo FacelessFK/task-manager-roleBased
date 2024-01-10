@@ -10,5 +10,9 @@ export class RegisterDto {
   avatar?: string;
 
   @IsNotEmpty({ message: 'please add a password' })
+  @MinLength(4)
+  @MaxLength(20)
   password: string;
+
+  refreshToken?: string;
 }

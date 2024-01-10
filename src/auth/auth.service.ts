@@ -1,5 +1,11 @@
 import { ConfigService } from '@nestjs/config';
-import { Injectable, NotAcceptableException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+  UseGuards,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 import { JwtService } from '@nestjs/jwt';
@@ -8,6 +14,9 @@ import { UsersService } from 'src/users/users.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RegisterDto } from './dto/auth.dto';
+import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
+import { UserRole } from 'src/enums/role.enum';
+import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +27,10 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
+  @UseGuards(AccessTokenGuard)
+  async findAll(): Promise<Users[]> {
+    return this.usersRepo.find();
+  }
   async getUserByUsername(username: string) {
     return await this.usersRepo.findOne({
       where: {
@@ -33,16 +46,20 @@ export class AuthService {
         'User with provided username already created.',
       );
     }
-    console.log(id);
+    const tempRole = username === 'ADMIN' ? UserRole.ADMIN : UserRole.USER;
+    const { accessToken, refreshToken } = await this.getTokens(
+      id,
+      username,
+      tempRole,
+    );
 
-    const { accessToken, refreshToken } = await this.getTokens(id, username);
-    const hashedPass = await this.hashData(password);
     const newUser = await this.usersRepo.save({
       username,
-      password: hashedPass,
+      password,
       avatar,
       refreshToken,
     });
+
     return {
       username: newUser.username,
       createTime: newUser.createTime,
@@ -51,24 +68,45 @@ export class AuthService {
     };
   }
 
-  hashData(data: string) {
-    return bcrypt.hash(data, 10);
+  async update(id: number, updateUser: UpdateUserDto) {
+    const user = await this.usersRepo.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
+    if (
+      user.username === updateUser.username ||
+      user.password === updateUser.password
+    ) {
+      throw new ForbiddenException(
+        'last username or password is same as new one',
+      );
+    }
+    const tokens = await this.getTokens(user.id, user.username, user.role);
+    // Update the hashed refresh token directly
+    return await this.usersRepo.update(user.id, {
+      ...updateUser,
+      refreshToken: tokens.refreshToken,
+    });
   }
-  async getTokens(userId: number, username: string) {
+  async deleteUser(id: number) {
+    const user = await this.usersRepo.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
+    return await this.usersRepo.delete(id);
+  }
+  async getTokens(userId: number, username: string, role: string) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
-          sub: userId,
+          id: userId,
           username,
+          role,
         },
         {
           secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-          expiresIn: '15m',
+          expiresIn: '2h',
         },
       ),
       this.jwtService.signAsync(
         {
-          sub: userId,
+          id: userId,
           username,
         },
         {
@@ -81,5 +119,9 @@ export class AuthService {
       accessToken,
       refreshToken,
     };
+  }
+
+  hashData(data: string) {
+    return bcrypt.hash(data, 10);
   }
 }
