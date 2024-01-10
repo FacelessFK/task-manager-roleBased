@@ -22,6 +22,9 @@ export class Tasks extends BaseEntity {
   @Column({ nullable: true })
   Priority: Priority;
 
+  @Column({ nullable: true })
+  filePath: string;
+
   @CreateDateColumn({ name: 'create_time', nullable: true })
   createTime: Date;
 

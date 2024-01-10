@@ -3,7 +3,6 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from './schema/user.entity';
-
 import { UserRole } from 'src/enums/role.enum';
 import { UpdateUserDto } from './dto/update-user.dto';
 

@@ -43,7 +43,7 @@ export class TasksService {
     if (!task) throw new Error('Task not found');
     return task;
   }
-  async updateTask(taskId, newTask: CreateTaskDto, user: any) {
+  async uploadFileTask(taskId, file: Express.Multer.File, user: any) {
     const oldTask = await this.taskRepo.findOne({
       where: {
         id: taskId,
@@ -55,8 +55,25 @@ export class TasksService {
     if (!oldTask) throw new Error('Task not found');
 
     Object.assign(oldTask, {
-      title: newTask.title,
-      Priority: newTask.priority,
+      filePath: file.filename,
+    });
+    return await this.taskRepo.save(oldTask);
+  }
+  async updateTask(taskId, updateTask: CreateTaskDto, user: any) {
+    const oldTask = await this.taskRepo.findOne({
+      where: {
+        id: taskId,
+        user: {
+          id: user.id,
+        },
+      },
+    });
+    if (!oldTask) throw new Error('Task not found');
+
+    Object.assign(oldTask, {
+      title: updateTask.title,
+      Priority: updateTask.priority,
+      filePath: updateTask.filePath,
     });
     return await this.taskRepo.save(oldTask);
   }

@@ -13,6 +13,10 @@ export const ROUTES = {
       URL: '',
       DESCRIPTION: 'get all task',
     },
+    UPLOAD_task_File: {
+      URL: '/upload',
+      DESCRIPTION: 'upload task file',
+    },
     GET_task_BY_ID: {
       URL: '/:taskId',
       DESCRIPTION: 'get task by id',

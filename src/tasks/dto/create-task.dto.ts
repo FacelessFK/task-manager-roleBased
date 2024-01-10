@@ -9,4 +9,7 @@ export class CreateTaskDto {
   @IsString()
   @IsNotEmpty()
   priority: Priority;
+
+  @IsString()
+  filePath?: string;
 }

@@ -22,7 +22,23 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { TasksService } from './tasks.service';
 
 import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
+import { Observable, of } from 'rxjs';
 
+export const storage = {
+  storage: diskStorage({
+    destination: './uploads/taskFiles',
+    filename: (req, file, cb) => {
+      const filename: string =
+        file.originalname.split('.').pop().replace(/\s/g, '_') + uuidv4();
+      const extension: string = file.originalname.split('.').pop();
+
+      cb(null, `${filename}.${extension}`);
+    },
+  }),
+};
 @Controller(ROUTES.TASK.ROOT)
 // @ApiTags(ROUTES.WORD.ROOT)
 export class TaskController {
@@ -30,21 +46,24 @@ export class TaskController {
 
   @Post(ROUTES.TASK.CREATE_task.URL)
   @UseGuards(AccessTokenGuard)
-  @UseInterceptors(FileInterceptor('file'))
   async createTask(
     @CurrentUser() user: string,
     @Body() createTaskReqDto: CreateTaskDto,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 1000 }),
-          new FileTypeValidator({ fileType: 'image/jpeg' }),
-        ],
-      }),
-    )
-    file: Express.Multer.File,
   ) {
     return await this.taskService.createTask(createTaskReqDto, user);
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file', storage))
+  @UseGuards(AccessTokenGuard)
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @CurrentUser() userId: string,
+    @Param(ROUTES.TASK.GET_task_BY_ID.PARAM) taskId: string,
+  ) {
+    console.log(file);
+    await this.taskService.uploadFileTask(taskId, file, userId);
+    return of({ imagePath: file.path });
   }
 
   @Get(ROUTES.TASK.GET_task.URL)
