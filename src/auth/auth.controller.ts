@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/auth.dto';
+
 import { UsersService } from 'src/users/users.service';
 import { LoginUserDto } from './dto/loginUser.dto';
 import { LoginResponse } from './types/loginResponse';
@@ -25,6 +25,7 @@ import { CurrentUser } from 'src/common/decorator/current-user.decorator';
 import { Hash } from 'src/common/utils/Hash';
 import { RolesGuard } from 'src/common/guards/role.guard';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
+import { RegisterDto } from 'src/users/dto/create-user.dto';
 
 @Controller('/auth')
 export class AuthController {
@@ -36,7 +37,7 @@ export class AuthController {
   @Roles(UserRole.ADMIN)
   @UseGuards(AccessTokenGuard, RolesGuard)
   async register(@Body() dto: RegisterDto): Promise<any> {
-    const newUser = await this.authService.createUser(dto);
+    const newUser = await this.userService.createUser(dto);
 
     return {
       status: 201,
@@ -48,7 +49,7 @@ export class AuthController {
   @Roles(UserRole.ADMIN)
   @UseGuards(AccessTokenGuard, RolesGuard)
   async update(@Param('id') params: string, @Body() dto: UpdateUserDto) {
-    const updatedUser = await this.authService.update(+params, dto);
+    const updatedUser = await this.userService.updateUser(+params, dto);
     return {
       status: 200,
       message: 'user updated successfully',
@@ -60,7 +61,7 @@ export class AuthController {
   @Roles(UserRole.ADMIN)
   @UseGuards(AccessTokenGuard, RolesGuard)
   async deleteUser(@Param('id') userId: string) {
-    const deletedUser = await this.authService.deleteUser(+userId);
+    const deletedUser = await this.userService.deleteUser(+userId);
     return {
       status: 200,
       message: 'user deleted successfully',
@@ -85,7 +86,7 @@ export class AuthController {
     let { password, ...userN } = user;
 
     const tempRole = username === 'ADMIN' ? UserRole.ADMIN : UserRole.USER;
-    const tokens = this.authService.getTokens(id, username, tempRole);
+    const tokens = this.userService.getTokens(id, username, tempRole);
 
     return tokens;
   }
@@ -99,6 +100,6 @@ export class AuthController {
   @Roles(UserRole.ADMIN)
   @UseGuards(AccessTokenGuard, RolesGuard)
   async findAll() {
-    return await this.authService.findAll();
+    return await this.userService.findAll();
   }
 }

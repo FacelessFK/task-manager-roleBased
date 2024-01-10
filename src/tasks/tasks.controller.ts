@@ -24,21 +24,10 @@ import { TasksService } from './tasks.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
+
 import { Observable, of } from 'rxjs';
+import { storage } from 'src/common/utils/uploadConf';
 
-export const storage = {
-  storage: diskStorage({
-    destination: './uploads/taskFiles',
-    filename: (req, file, cb) => {
-      const filename: string =
-        file.originalname.split('.').pop().replace(/\s/g, '_') + uuidv4();
-      const extension: string = file.originalname.split('.').pop();
-
-      cb(null, `${filename}.${extension}`);
-    },
-  }),
-};
 @Controller(ROUTES.TASK.ROOT)
 // @ApiTags(ROUTES.WORD.ROOT)
 export class TaskController {
@@ -54,7 +43,7 @@ export class TaskController {
   }
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file', storage))
+  @UseInterceptors(FileInterceptor('file', storage('taskFiles')))
   @UseGuards(AccessTokenGuard)
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
