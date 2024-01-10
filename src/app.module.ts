@@ -5,6 +5,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerFilter } from './common/filters/throttlerExeptionFilter/throttlerExeptionFilter';
+import { Users } from './users/schema/user.entity';
+import { RolesGuard } from './common/guards/role.guard';
+import { TasksModule } from './tasks/tasks.module';
+import { Tasks } from './tasks/schema/tasks.entity';
+import { CqrsModule } from '@nestjs/cqrs';
 
 @Module({
   imports: [
@@ -18,15 +27,34 @@ import { AuthModule } from './auth/auth.module';
         username: configService.get('DATABASE_USER'),
         password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_NAME'),
-        entities: [],
+        entities: [Users, Tasks],
         synchronize: true,
       }),
       inject: [ConfigService],
     }),
     UsersModule,
+    TasksModule,
     AuthModule,
+    CqrsModule,
+    ThrottlerModule.forRoot([
+      {
+        ttl: 5000,
+        limit: 3,
+      },
+    ]),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+    { provide: APP_FILTER, useClass: AllExceptionsFilter },
+    {
+      provide: APP_FILTER,
+      useClass: ThrottlerFilter,
+    },
+  ],
 })
 export class AppModule {}

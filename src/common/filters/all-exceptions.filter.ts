@@ -1,85 +1,108 @@
 import {
   ArgumentsHost,
-  BadRequestException,
   Catch,
   ExceptionFilter,
   HttpException,
   HttpStatus,
-  Inject,
 } from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
+import { Request, Response } from 'express';
 
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { Logger } from 'winston';
+import * as fs from 'fs';
 
-import { createErrorLog } from './helper/log-http';
-import { INTERNAL_SERVER_ERROR } from './errors';
+import {
+  CustomHttpExceptionResponse,
+  HttpExceptionResponse,
+} from './model/http-exception.req.interface';
 
+// error handeler for all error in application
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  constructor(
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
-    private readonly httpAdapterHost: HttpAdapterHost,
-  ) {}
-
-  catch(exception: unknown, host: ArgumentsHost): void {
-    const { httpAdapter } = this.httpAdapterHost;
+  catch(exception: HttpException | Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
 
-    /* -------------------------------------------------------------------------- */
-    /*                               Http Status                                  */
-    /* -------------------------------------------------------------------------- */
+    let status: HttpStatus;
+    let errorMessage: string;
 
-    const httpStatus =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+    // handel all http error
+    if (exception instanceof HttpException) {
+      status = exception.getStatus();
+      const errorResponse = exception.getResponse();
+      errorMessage =
+        (errorResponse as HttpExceptionResponse).error || exception.message;
+    } else if (exception instanceof Error) {
+      // handel throw new Error
 
-    /* -------------------------------------------------------------------------- */
-    /*                           Creating Error Message                           */
-    /* -------------------------------------------------------------------------- */
-
-    let message = exception;
-    if (exception instanceof BadRequestException) {
-      message = exception.getResponse()['message'];
-    } else if (exception instanceof HttpException) {
-      message = exception.message;
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+      errorMessage = exception.message;
     } else {
-      message = exception;
+      // handel other error
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+      errorMessage = 'Critical internal server error occurred!';
     }
 
-    /* -------------------------------------------------------------------------- */
-    /*                             Creating Error Log                             */
-    /* -------------------------------------------------------------------------- */
+    const errorResponse = this.getErrorResponse(status, errorMessage, request);
 
-    const { body, params, method, query, url } = ctx.getRequest();
+    // handel error message
+    const messageErrType =
+      exception instanceof HttpException &&
+      exception.getStatus() === HttpStatus.TOO_MANY_REQUESTS
+        ? exception.message
+        : exception instanceof HttpException
+          ? exception.getResponse()['message']
+          : errorMessage;
 
-    this.logger.log(
-      createErrorLog({
-        statusCode: `${httpStatus}`,
-        message: `${message}`,
-        body,
-        params,
-        method,
-        query,
-        url,
-      }),
-    );
+    const messageErr = Array.isArray(messageErrType)
+      ? messageErrType[0]
+      : messageErrType;
 
-    /* -------------------------------------------------------------------------- */
-    /*                              Responding Error                              */
-    /* -------------------------------------------------------------------------- */
-
-    const responseBody = {
-      statusCode: httpStatus,
-      timestamp: new Date().toISOString(),
-      path: httpAdapter.getRequestUrl(ctx.getRequest()),
-      message:
-        httpStatus === 500 && process.env?.NODE_ENV === 'production'
-          ? INTERNAL_SERVER_ERROR.description
-          : message,
-    };
-
-    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
+    const errorLog = this.getErrorLog(errorResponse, request, exception);
+    this.writeErrorLogToFile(errorLog);
+    response.status(status).json({
+      status: errorResponse.statusCode,
+      message: messageErr,
+      stack: exception.stack,
+      data: null,
+    });
   }
+  private extractValidationErrors(validationError: any): string {
+    // Extract the error messages from class-validator validation errors
+    if (Array.isArray(validationError)) {
+      return validationError
+        .map((error) => Object.values(error.constraints).join(', '))
+        .join(', ');
+    }
+    return validationError;
+  }
+  private getErrorResponse = (
+    status: HttpStatus,
+    errorMessage: string,
+    request: Request,
+  ): CustomHttpExceptionResponse => ({
+    statusCode: status,
+    error: errorMessage,
+    path: request.url,
+    method: request.method,
+    timeStamp: new Date(),
+  });
+
+  private getErrorLog = (
+    errorResponse: CustomHttpExceptionResponse,
+    request: Request,
+    exception: unknown,
+  ): string => {
+    const { statusCode, error } = errorResponse;
+    const { method, url } = request;
+    const errorLog = `Response Code: ${statusCode} - Method: ${method} - URL: ${url}\n\n
+        ${JSON.stringify(errorResponse)}\n\n
+        ${exception instanceof HttpException ? exception.stack : error}\n\n`;
+    return errorLog;
+  };
+
+  private writeErrorLogToFile = (errorLog: string): void => {
+    fs.appendFile('error.log', errorLog, 'utf8', (err) => {
+      if (err) throw err;
+    });
+  };
 }
