@@ -95,7 +95,9 @@ export class UsersService implements OnModuleInit {
   }
 
   async updateUser(id: number, updateUser: UpdateUserDto) {
-    const user = await this.usersRepo.findOne({ where: { id } });
+    console.log(id);
+
+    const user = await this.usersRepo.findOne({ where: { id: id } });
     if (!user) throw new NotFoundException('User not found');
     if (
       user.username === updateUser.username ||

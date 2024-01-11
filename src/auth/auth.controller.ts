@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
   HttpException,
   HttpStatus,
   Param,
@@ -10,18 +9,12 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-
-import { AuthService } from './auth.service';
-
 import { UsersService } from 'src/users/users.service';
 import { LoginUserDto } from './dto/loginUser.dto';
 import { LoginResponse } from './types/loginResponse';
-import { Users } from 'src/users/schema/user.entity';
 import { Roles } from '../common/decorator/roles.decorator';
 import { UserRole } from 'src/enums/role.enum';
 import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
-import { GetCurrentUser } from 'src/common/decorator/get-current-user.decorator';
-import { CurrentUser } from 'src/common/decorator/current-user.decorator';
 import { Hash } from 'src/common/utils/Hash';
 import { RolesGuard } from 'src/common/guards/role.guard';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
@@ -29,10 +22,7 @@ import { RegisterDto } from 'src/users/dto/create-user.dto';
 
 @Controller('/auth')
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-    private readonly userService: UsersService,
-  ) {}
+  constructor(private readonly userService: UsersService) {}
   @Post('/register')
   @Roles(UserRole.ADMIN)
   @UseGuards(AccessTokenGuard, RolesGuard)
@@ -48,8 +38,8 @@ export class AuthController {
   @Patch(':id')
   @Roles(UserRole.ADMIN)
   @UseGuards(AccessTokenGuard, RolesGuard)
-  async update(@Param('id') params: string, @Body() dto: UpdateUserDto) {
-    const updatedUser = await this.userService.updateUser(+params, dto);
+  async update(@Param('id') params: number, @Body() dto: UpdateUserDto) {
+    const updatedUser = await this.userService.updateUser(params, dto);
     return {
       status: 200,
       message: 'user updated successfully',
@@ -60,8 +50,8 @@ export class AuthController {
   @Delete(':id')
   @Roles(UserRole.ADMIN)
   @UseGuards(AccessTokenGuard, RolesGuard)
-  async deleteUser(@Param('id') userId: string) {
-    const deletedUser = await this.userService.deleteUser(+userId);
+  async deleteUser(@Param('id') userId: number) {
+    const deletedUser = await this.userService.deleteUser(userId);
     return {
       status: 200,
       message: 'user deleted successfully',

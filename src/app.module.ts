@@ -10,7 +10,6 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ThrottlerFilter } from './common/filters/throttlerExeptionFilter/throttlerExeptionFilter';
 import { Users } from './users/schema/user.entity';
-import { RolesGuard } from './common/guards/role.guard';
 import { TasksModule } from './tasks/tasks.module';
 import { Tasks } from './tasks/schema/tasks.entity';
 import { CqrsModule } from '@nestjs/cqrs';

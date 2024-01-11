@@ -46,13 +46,13 @@ export class TaskController {
     return await this.taskService.createTask(createTaskReqDto, user);
   }
 
-  @Post('upload')
+  @Post('upload/:taskId')
   @UseInterceptors(FileInterceptor('file', storage('taskFiles')))
   @UseGuards(AccessTokenGuard)
   async uploadFileTask(
     @UploadedFile() file: Express.Multer.File,
     @CurrentUser() userId: string,
-    @Param(ROUTES.TASK.GET_task_BY_ID.PARAM) taskId: string,
+    @Param('taskId') taskId: string,
   ) {
     console.log(file);
     await this.taskService.uploadFileTask(taskId, file, userId);
