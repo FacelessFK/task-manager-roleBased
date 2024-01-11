@@ -11,6 +11,5 @@ export class CreateTaskDto {
   @IsNotEmpty()
   priority: Priority;
 
-  @IsString()
   filePath?: string;
 }

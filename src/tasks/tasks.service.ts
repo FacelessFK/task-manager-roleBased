@@ -18,6 +18,9 @@ export class TasksService {
     });
     return await this.taskRepo.save(newTask);
   }
+  async getAllTasks() {
+    return await this.taskRepo.find();
+  }
   async getUserTasks(user: any) {
     const tasks = await this.taskRepo.find({
       where: {
@@ -56,6 +59,23 @@ export class TasksService {
 
     Object.assign(oldTask, {
       filePath: file.filename,
+    });
+    return await this.taskRepo.save(oldTask);
+  }
+  async uploadTaskImage(taskId, file: Express.Multer.File, user: any) {
+    console.log(file);
+    const oldTask = await this.taskRepo.findOne({
+      where: {
+        id: taskId,
+        user: {
+          id: user.id,
+        },
+      },
+    });
+    if (!oldTask) throw new Error('Task not found');
+
+    Object.assign(oldTask, {
+      taskImg: file.filename,
     });
     return await this.taskRepo.save(oldTask);
   }

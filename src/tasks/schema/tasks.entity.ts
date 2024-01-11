@@ -25,6 +25,9 @@ export class Tasks extends BaseEntity {
   @Column({ nullable: true })
   filePath: string;
 
+  @Column({ nullable: true })
+  taskImg: string;
+
   @CreateDateColumn({ name: 'create_time', nullable: true })
   createTime: Date;
 

@@ -27,6 +27,9 @@ import path from 'path';
 
 import { Observable, of } from 'rxjs';
 import { storage } from 'src/common/utils/uploadConf';
+import { Roles } from 'src/common/decorator/roles.decorator';
+import { RolesGuard } from 'src/common/guards/role.guard';
+import { UserRole } from 'src/enums/role.enum';
 
 @Controller(ROUTES.TASK.ROOT)
 // @ApiTags(ROUTES.WORD.ROOT)
@@ -45,7 +48,7 @@ export class TaskController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', storage('taskFiles')))
   @UseGuards(AccessTokenGuard)
-  async uploadFile(
+  async uploadFileTask(
     @UploadedFile() file: Express.Multer.File,
     @CurrentUser() userId: string,
     @Param(ROUTES.TASK.GET_task_BY_ID.PARAM) taskId: string,
@@ -54,11 +57,30 @@ export class TaskController {
     await this.taskService.uploadFileTask(taskId, file, userId);
     return of({ imagePath: file.path });
   }
+  @Post('task-image/:taskId')
+  @UseInterceptors(FileInterceptor('file', storage('task-images')))
+  @UseGuards(AccessTokenGuard)
+  async uploadTaskImage(
+    @UploadedFile() file: Express.Multer.File,
+    @CurrentUser() userId: string,
+    @Param(ROUTES.TASK.GET_task_BY_ID.PARAM) taskId: string,
+  ) {
+    console.log(file);
+    await this.taskService.uploadTaskImage(taskId, file, userId);
+    return of({ imagePath: file.path });
+  }
 
   @Get(ROUTES.TASK.GET_task.URL)
   @UseGuards(AccessTokenGuard)
   async getTasks(@CurrentUser() userId: string) {
     return await this.taskService.getUserTasks(userId);
+  }
+
+  @Get(ROUTES.TASK.GET_ALL_task.URL)
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AccessTokenGuard, RolesGuard)
+  async getAllTasks() {
+    return await this.taskService.getAllTasks();
   }
 
   @Get(ROUTES.TASK.GET_task_BY_ID.URL)

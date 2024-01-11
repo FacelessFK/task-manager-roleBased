@@ -11,6 +11,10 @@ export const ROUTES = {
     },
     GET_task: {
       URL: '',
+      DESCRIPTION: 'get all task of a user',
+    },
+    GET_ALL_task: {
+      URL: 'all',
       DESCRIPTION: 'get all task',
     },
     UPLOAD_task_File: {
