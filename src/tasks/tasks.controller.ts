@@ -2,11 +2,8 @@ import {
   Body,
   Controller,
   Delete,
-  FileTypeValidator,
   Get,
-  MaxFileSizeValidator,
   Param,
-  ParseFilePipe,
   ParseUUIDPipe,
   Post,
   Put,
@@ -20,11 +17,7 @@ import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
 import { ROUTES } from 'src/routes/routes';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { TasksService } from './tasks.service';
-
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import path from 'path';
-
 import { Observable, of } from 'rxjs';
 import { storage } from 'src/common/utils/uploadConf';
 import { Roles } from 'src/common/decorator/roles.decorator';
@@ -33,7 +26,6 @@ import { UserRole } from 'src/enums/role.enum';
 import { SortRequestDto } from 'src/common/dtos/sort.dto';
 
 @Controller(ROUTES.TASK.ROOT)
-// @ApiTags(ROUTES.WORD.ROOT)
 export class TaskController {
   constructor(private taskService: TasksService) {}
 
@@ -99,7 +91,7 @@ export class TaskController {
   @Put(ROUTES.TASK.UPDATE_task_BY_ID.URL)
   @UseGuards(AccessTokenGuard)
   async updateTask(
-    @Body() updateWordRequestDto: CreateTaskDto,
+    @Body() updateTaskRequestDto: CreateTaskDto,
     @Param(
       ROUTES.TASK.UPDATE_task_BY_ID.PARAM,
       new ParseUUIDPipe({ version: '4' }),
@@ -109,7 +101,7 @@ export class TaskController {
   ) {
     return await this.taskService.updateTask(
       taskId,
-      updateWordRequestDto,
+      updateTaskRequestDto,
       userId,
     );
   }
