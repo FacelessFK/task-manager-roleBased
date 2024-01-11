@@ -90,16 +90,4 @@ export class AuthController {
 
     return tokens;
   }
-  @UseGuards(AccessTokenGuard)
-  @Get('me')
-  async getLoggedInUser(@CurrentUser() user: string) {
-    return user;
-  }
-
-  @Get('/all')
-  @Roles(UserRole.ADMIN)
-  @UseGuards(AccessTokenGuard, RolesGuard)
-  async findAll() {
-    return await this.userService.findAll();
-  }
 }

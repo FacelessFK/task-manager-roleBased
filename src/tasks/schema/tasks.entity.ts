@@ -19,8 +19,8 @@ export class Tasks extends BaseEntity {
   @Column()
   title: string;
 
-  @Column({ nullable: true })
-  Priority: Priority;
+  @Column({})
+  priority: Priority;
 
   @Column({ nullable: true })
   filePath: string;

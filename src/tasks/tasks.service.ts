@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Tasks } from './schema/tasks.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { title } from 'process';
+import { SortRequestDto } from 'src/common/dtos/sort.dto';
 
 @Injectable()
 export class TasksService {
@@ -13,21 +14,34 @@ export class TasksService {
   ) {}
   async createTask(task: CreateTaskDto, user: any) {
     const newTask = this.taskRepo.create({
-      ...{ title: task.title, Priority: task.priority },
+      ...{ title: task.title, priority: task.priority },
       user: { id: user.id },
     });
     return await this.taskRepo.save(newTask);
   }
-  async getAllTasks() {
-    return await this.taskRepo.find();
+  async getAllTasks(sortTask: SortRequestDto) {
+    const { sortType, sort } = sortTask;
+
+    const order = {};
+    order[sort] = sortType;
+    const tasks = await this.taskRepo.find({
+      order: order,
+    });
+    if (!tasks) throw new Error('Tasks not found');
+    return tasks;
   }
-  async getUserTasks(user: any) {
+  async getUserTasks(user: any, sortTask: SortRequestDto) {
+    const { sortType, sort } = sortTask;
+    const order = {};
+    order[sort] = sortType;
+
     const tasks = await this.taskRepo.find({
       where: {
         user: {
           id: user.id,
         },
       },
+      order: order,
     });
     if (!tasks) throw new Error('Tasks not found');
     return tasks;
@@ -112,5 +126,28 @@ export class TasksService {
     });
     if (!task) throw new Error('Task not found');
     return await this.taskRepo.remove(task);
+  }
+
+  async searchUserTasks(user: any, search: { title: string }) {
+    const task = await this.taskRepo.find({
+      where: {
+        title: Like(`%${search.title}%`),
+        user: {
+          id: user.id,
+        },
+      },
+    });
+    if (!task || task.length <= 0) throw new Error('Task not found');
+    return task;
+  }
+  async searchAllTasks(search: { title: string }) {
+    const task = await this.taskRepo.find({
+      where: {
+        title: Like(`%${search.title}%`),
+      },
+    });
+
+    if (!task || task.length <= 0) throw new Error('Task not found');
+    return task;
   }
 }

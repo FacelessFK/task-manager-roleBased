@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Users } from './schema/user.entity';
 import { UserRole } from 'src/enums/role.enum';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -16,6 +16,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { currentUserDto } from './dto/currentUserDto';
+import { SortRequestDto } from 'src/common/dtos/sort.dto';
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -116,8 +117,25 @@ export class UsersService implements OnModuleInit {
     if (!user) throw new NotFoundException('User not found');
     return await this.usersRepo.delete(id);
   }
-  async findAll(): Promise<Users[]> {
-    return this.usersRepo.find();
+  async findAll(sortUsers: SortRequestDto): Promise<Users[]> {
+    const { sortType, sort } = sortUsers;
+    const order = {};
+    order[sort] = sortType;
+
+    const user = await this.usersRepo.find({
+      order: order,
+    });
+    if (!user) throw new Error('users not found');
+    return user;
+  }
+  async searchUser(search: { username: string }): Promise<Users[]> {
+    const user = await this.usersRepo.find({
+      where: {
+        username: Like(`%${search.username}%`),
+      },
+    });
+    if (!user) throw new Error('users not found');
+    return user;
   }
 
   async uploadAvatar(userd, avatar: string) {

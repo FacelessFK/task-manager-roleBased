@@ -1,8 +1,10 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
   Post,
+  Query,
   Res,
   UploadedFile,
   UseGuards,
@@ -17,6 +19,10 @@ import { ROUTES } from 'src/routes/routes';
 import { currentUserDto } from './dto/currentUserDto';
 import path, { join } from 'path';
 import { of } from 'rxjs';
+import { Roles } from 'src/common/decorator/roles.decorator';
+import { UserRole } from 'src/enums/role.enum';
+import { RolesGuard } from 'src/common/guards/role.guard';
+import { SortRequestDto } from 'src/common/dtos/sort.dto';
 
 @Controller('user')
 export class UsersController {
@@ -32,7 +38,6 @@ export class UsersController {
       currentUser,
       file.filename,
     );
-    
 
     return {
       status: 200,
@@ -49,5 +54,23 @@ export class UsersController {
     return of(
       res.sendfile(join(process.cwd(), 'uploads/avatars/' + user.avatar)),
     );
+  }
+  @UseGuards(AccessTokenGuard)
+  @Get('me')
+  async getLoggedInUser(@CurrentUser() user: string) {
+    return user;
+  }
+
+  @Get('/all')
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AccessTokenGuard, RolesGuard)
+  async findAll(@Query() sortDto: SortRequestDto) {
+    return await this.userService.findAll(sortDto);
+  }
+  @Post('/search')
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AccessTokenGuard, RolesGuard)
+  async searchUser(@Body() search: { username: string }) {
+    return await this.userService.searchUser(search);
   }
 }

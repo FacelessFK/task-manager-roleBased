@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsEnum } from 'class-validator';
 import { Priority } from 'src/enums/priority.enum';
 
 export class CreateTaskDto {
@@ -7,6 +7,7 @@ export class CreateTaskDto {
   @IsNotEmpty()
   title: string;
 
+  @IsEnum(Priority, { message: 'Invalid priority value' })
   @IsString()
   @IsNotEmpty()
   priority: Priority;

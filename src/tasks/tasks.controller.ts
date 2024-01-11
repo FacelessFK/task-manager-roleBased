@@ -30,6 +30,7 @@ import { storage } from 'src/common/utils/uploadConf';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { RolesGuard } from 'src/common/guards/role.guard';
 import { UserRole } from 'src/enums/role.enum';
+import { SortRequestDto } from 'src/common/dtos/sort.dto';
 
 @Controller(ROUTES.TASK.ROOT)
 // @ApiTags(ROUTES.WORD.ROOT)
@@ -72,15 +73,18 @@ export class TaskController {
 
   @Get(ROUTES.TASK.GET_task.URL)
   @UseGuards(AccessTokenGuard)
-  async getTasks(@CurrentUser() userId: string) {
-    return await this.taskService.getUserTasks(userId);
+  async getTasks(
+    @CurrentUser() userId: string,
+    @Query() sortDto: SortRequestDto,
+  ) {
+    return await this.taskService.getUserTasks(userId, sortDto);
   }
 
   @Get(ROUTES.TASK.GET_ALL_task.URL)
   @Roles(UserRole.ADMIN)
   @UseGuards(AccessTokenGuard, RolesGuard)
-  async getAllTasks() {
-    return await this.taskService.getAllTasks();
+  async getAllTasks(@Query() sortDto: SortRequestDto) {
+    return await this.taskService.getAllTasks(sortDto);
   }
 
   @Get(ROUTES.TASK.GET_task_BY_ID.URL)
@@ -127,5 +131,19 @@ export class TaskController {
       message: 'task deleted successfully',
       data: { taskID: deletedTask.id },
     };
+  }
+  @Post('search-user-tasks')
+  @UseGuards(AccessTokenGuard)
+  async searchUserTasks(
+    @CurrentUser() userId: string,
+    @Body() search: { title: string },
+  ) {
+    return await this.taskService.searchUserTasks(userId, search);
+  }
+  @Post('search-all-tasks')
+  @Roles(UserRole.ADMIN)
+  @UseGuards(AccessTokenGuard, RolesGuard)
+  async searchAllTasks(@Body() search: { title: string }) {
+    return await this.taskService.searchAllTasks(search);
   }
 }
