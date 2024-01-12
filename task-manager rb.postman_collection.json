@@ -1,0 +1,563 @@
+{
+	"info": {
+		"_postman_id": "98e6d701-bc20-4e51-aadd-acf7b15ab3dd",
+		"name": "task-manager rb",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25898447"
+	},
+	"item": [
+		{
+			"name": "task",
+			"item": [
+				{
+					"name": "createTask",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRlMWMxOGY4LTM3MDYtNGNkNS1hNTRkLWRmODg0YTU0NjdlNyIsInVzZXJuYW1lIjoiQURNSU4iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MDQ5NjU4MTMsImV4cCI6MTcwNDk3MzAxM30.C9F4o5fFVJ5SQh5yf5LOk-4d5BdZXGCdNX6mFqbo37U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"aqwelgfykifffaweffaefaweff\",\r\n    \"priority\":\"medium\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/task",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"task"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "gettask",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRlMWMxOGY4LTM3MDYtNGNkNS1hNTRkLWRmODg0YTU0NjdlNyIsInVzZXJuYW1lIjoiQURNSU4iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MDQ5NjU4MTMsImV4cCI6MTcwNDk3MzAxM30.C9F4o5fFVJ5SQh5yf5LOk-4d5BdZXGCdNX6mFqbo37U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/task/?sortType=ASC&sort=title",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"task",
+								""
+							],
+							"query": [
+								{
+									"key": "sortType",
+									"value": "ASC"
+								},
+								{
+									"key": "sort",
+									"value": "title"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update task",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZlZTM3OGFmLTBkYWEtNDc4Zi1hZjVlLTI0M2JmNGYxZmY5ZCIsInVzZXJuYW1lIjoiQURNSU4iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MDQ5MDg0MTQsImV4cCI6MTcwNDkwOTMxNH0.sI09tnr5riOz8vrHOn_3f4psI4mo_uqY1Kyb11C-vL8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"new title\",\r\n    \"priority\":\"high\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/task/ffa63d19-0a97-48e9-bf22-4d2ade05de2a",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"task",
+								"ffa63d19-0a97-48e9-bf22-4d2ade05de2a"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhlMDA2ZjM4LTMxMWUtNGI5NC05ZjZiLWVlZWI3MmZiYTYyYSIsInVzZXJuYW1lIjoiZmFyZGluIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3MDQ5MTAzOTksImV4cCI6MTcwNDkxNzU5OX0.WVroqzVsYsYKJhvpytp-o9zqfeF87EMcjomZpTZFioc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/task/350a32aa-bb49-4348-ade8-f57899a81ad6",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"task",
+								"350a32aa-bb49-4348-ade8-f57899a81ad6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRlMWMxOGY4LTM3MDYtNGNkNS1hNTRkLWRmODg0YTU0NjdlNyIsInVzZXJuYW1lIjoiQURNSU4iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MDQ5MTQwMDUsImV4cCI6MTcwNDkyMTIwNX0.fHfPlftXSufl8GzNcOXiU83HvA8euSuwVeh1aPJHY0E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/fardi/Desktop/power point/gestalt-proximity1.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/task/upload/",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"task",
+								"upload",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload-img",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdjMGZlYmMwLTYxMTQtNGRiNy1hMWI4LTFlNzM4ZjEyYzViNSIsInVzZXJuYW1lIjoiZmFjZWxlc3MiLCJyb2xlIjoidXNlciIsImlhdCI6MTcwNDk2MzUwOCwiZXhwIjoxNzA0OTcwNzA4fQ.4yMkM9wt_tMefrhYQzZ8zOfdHEyn3CBvR7v7foBpZqw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/D:/wallpaper/milan1.jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/task/task-image/f7d55439-4fd1-4d0d-8a1c-12fedbebe220",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"task",
+								"task-image",
+								"f7d55439-4fd1-4d0d-8a1c-12fedbebe220"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-all-tasks",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRlMWMxOGY4LTM3MDYtNGNkNS1hNTRkLWRmODg0YTU0NjdlNyIsInVzZXJuYW1lIjoiQURNSU4iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MDQ5NjU4MTMsImV4cCI6MTcwNDk3MzAxM30.C9F4o5fFVJ5SQh5yf5LOk-4d5BdZXGCdNX6mFqbo37U",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/task/all?sortType=DESC&sort=title",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"task",
+								"all"
+							],
+							"query": [
+								{
+									"key": "sortType",
+									"value": "DESC"
+								},
+								{
+									"key": "sort",
+									"value": "title"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/task/search",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"task",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search-all",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "upload-avatar",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdjMGZlYmMwLTYxMTQtNGRiNy1hMWI4LTFlNzM4ZjEyYzViNSIsInVzZXJuYW1lIjoiZmFjZWxlc3MiLCJyb2xlIjoidXNlciIsImlhdCI6MTcwNDkyMzc5OSwiZXhwIjoxNzA0OTMwOTk5fQ.c5pV-5wKA5PF8IuYRpq04yvbeaWpCPgKq3iuv7gBVI4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/D:/pic/FacelessFk21_create_picture_from_faceless_fk21_username_in_twit_e2a11636-1ea1-47ef-a175-99849e68d47b.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/user/upload",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"user",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-avatar",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRlMWMxOGY4LTM3MDYtNGNkNS1hNTRkLWRmODg0YTU0NjdlNyIsInVzZXJuYW1lIjoiQURNSU4iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MDQ5MjAyMjksImV4cCI6MTcwNDkyNzQyOX0.1ZvFokfCyobNHuqpevJYbvhnB1LlLUZO_CbIvEaOAoA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/user/get-avatar/7c0febc0-6114-4db7-a1b8-1e738f12c5b5",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"user",
+								"get-avatar",
+								"7c0febc0-6114-4db7-a1b8-1e738f12c5b5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"ADMIN\",\r\n    \"password\":\"12345\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/auth/login",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRlMWMxOGY4LTM3MDYtNGNkNS1hNTRkLWRmODg0YTU0NjdlNyIsInVzZXJuYW1lIjoiQURNSU4iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MDQ5MjMwNzgsImV4cCI6MTcwNDkzMDI3OH0.Pnh4zt0yTI8g8ZemE7RK1uCUlmhSk_pANbzaeWDl-fc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"faceless\",\r\n    \"password\":\"12345\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/auth/register",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "all",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdjMGZlYmMwLTYxMTQtNGRiNy1hMWI4LTFlNzM4ZjEyYzViNSIsInVzZXJuYW1lIjoiZmFjZWxlc3MiLCJyb2xlIjoidXNlciIsImlhdCI6MTcwNDk2MzUwOCwiZXhwIjoxNzA0OTcwNzA4fQ.4yMkM9wt_tMefrhYQzZ8zOfdHEyn3CBvR7v7foBpZqw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/auth/all",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"auth",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "myinfo",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBRE1JTiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcwNDg4NjQ1NCwiZXhwIjoxNzA0ODg3MzU0fQ.CAeArQKxOB_otNf_UnAe_do52h7ExXDn6ZVv9IAB0wI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/auth/me",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"auth",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "put",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"gfrrf\"\r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/auth/2",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"auth",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "del",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBRE1JTiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcwNDg4ODI5MiwiZXhwIjoxNzA0ODg5MTkyfQ.4hdeIN7YqvqLvjaqFvy6ckwqO80iyi9W5L2vYt2YnRc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/auth/5",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"auth",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search-all",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
