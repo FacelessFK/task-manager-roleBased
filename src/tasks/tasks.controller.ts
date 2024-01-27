@@ -24,6 +24,7 @@ import { Roles } from 'src/common/decorator/roles.decorator';
 import { RolesGuard } from 'src/common/guards/role.guard';
 import { UserRole } from 'src/enums/role.enum';
 import { SortRequestDto } from 'src/common/dtos/sort.dto';
+import { currentUserDto } from 'src/users/dto/currentUserDto';
 
 @Controller(ROUTES.TASK.ROOT)
 export class TaskController {
@@ -32,9 +33,11 @@ export class TaskController {
   @Post(ROUTES.TASK.CREATE_task.URL)
   @UseGuards(AccessTokenGuard)
   async createTask(
-    @CurrentUser() user: string,
+    @CurrentUser() user: currentUserDto,
     @Body() createTaskReqDto: CreateTaskDto,
   ) {
+    console.log(user);
+
     return await this.taskService.createTask(createTaskReqDto, user);
   }
 
@@ -43,7 +46,7 @@ export class TaskController {
   @UseGuards(AccessTokenGuard)
   async uploadFileTask(
     @UploadedFile() file: Express.Multer.File,
-    @CurrentUser() userId: string,
+    @CurrentUser() userId: currentUserDto,
     @Param('taskId') taskId: string,
   ) {
     console.log(file);
@@ -55,7 +58,7 @@ export class TaskController {
   @UseGuards(AccessTokenGuard)
   async uploadTaskImage(
     @UploadedFile() file: Express.Multer.File,
-    @CurrentUser() userId: string,
+    @CurrentUser() userId: currentUserDto,
     @Param(ROUTES.TASK.GET_task_BY_ID.PARAM) taskId: string,
   ) {
     console.log(file);
@@ -66,7 +69,7 @@ export class TaskController {
   @Get(ROUTES.TASK.GET_task.URL)
   @UseGuards(AccessTokenGuard)
   async getTasks(
-    @CurrentUser() userId: string,
+    @CurrentUser() userId: currentUserDto,
     @Query() sortDto: SortRequestDto,
   ) {
     return await this.taskService.getUserTasks(userId, sortDto);
@@ -82,7 +85,7 @@ export class TaskController {
   @Get(ROUTES.TASK.GET_task_BY_ID.URL)
   @UseGuards(AccessTokenGuard)
   async getTask(
-    @CurrentUser() userId: string,
+    @CurrentUser() userId: currentUserDto,
     @Param(ROUTES.TASK.GET_task_BY_ID.PARAM) taskId: string,
   ) {
     return await this.taskService.getUserTask(userId, taskId);
@@ -97,7 +100,7 @@ export class TaskController {
       new ParseUUIDPipe({ version: '4' }),
     )
     taskId: string,
-    @CurrentUser() userId: string,
+    @CurrentUser() userId: currentUserDto,
   ) {
     return await this.taskService.updateTask(
       taskId,
@@ -108,7 +111,7 @@ export class TaskController {
   @Delete(ROUTES.TASK.DELETE_task_BY_ID.URL)
   @UseGuards(AccessTokenGuard)
   async deleteTask(
-    @CurrentUser() userId: string,
+    @CurrentUser() userId: currentUserDto,
     @Param(
       ROUTES.TASK.DELETE_task_BY_ID.PARAM,
       new ParseUUIDPipe({ version: '4' }),
@@ -127,7 +130,7 @@ export class TaskController {
   @Post('search-user-tasks')
   @UseGuards(AccessTokenGuard)
   async searchUserTasks(
-    @CurrentUser() userId: string,
+    @CurrentUser() userId: currentUserDto,
     @Body() search: { title: string },
   ) {
     return await this.taskService.searchUserTasks(userId, search);

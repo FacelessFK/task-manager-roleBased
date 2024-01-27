@@ -13,7 +13,7 @@ import {
 @Entity({ name: 'tasks' })
 export class Tasks extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column()
   title: string;

@@ -50,7 +50,7 @@ export class UsersService implements OnModuleInit {
       where: { id: userID },
     });
   }
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<Users> {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<Users> {
     const user = await this.usersRepo.findOne({ where: { id } });
 
     Object.assign(user, updateUserDto);
@@ -94,7 +94,7 @@ export class UsersService implements OnModuleInit {
     };
   }
 
-  async updateUser(id: number, updateUser: UpdateUserDto) {
+  async updateUser(id: string, updateUser: UpdateUserDto) {
     console.log(id);
 
     const user = await this.usersRepo.findOne({ where: { id: id } });
@@ -114,7 +114,7 @@ export class UsersService implements OnModuleInit {
       refreshToken: tokens.refreshToken,
     });
   }
-  async deleteUser(id: number) {
+  async deleteUser(id: string) {
     const user = await this.usersRepo.findOne({ where: { id } });
     if (!user) throw new NotFoundException('User not found');
     return await this.usersRepo.delete(id);
@@ -148,7 +148,7 @@ export class UsersService implements OnModuleInit {
     return await this.usersRepo.update(user.id, { avatar });
   }
 
-  async getTokens(userId: number, username: string, role: string) {
+  async getTokens(userId: string, username: string, role: string) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {

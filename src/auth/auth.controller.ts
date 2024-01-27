@@ -26,7 +26,7 @@ export class AuthController {
   @Post('/register')
   @Roles(UserRole.ADMIN)
   @UseGuards(AccessTokenGuard, RolesGuard)
-  async register(@Body() dto: RegisterDto): Promise<any> {
+  async register(@Body() dto: RegisterDto): Promise<Object> {
     const newUser = await this.userService.createUser(dto);
 
     return {
@@ -38,7 +38,7 @@ export class AuthController {
   @Patch(':id')
   @Roles(UserRole.ADMIN)
   @UseGuards(AccessTokenGuard, RolesGuard)
-  async update(@Param('id') params: number, @Body() dto: UpdateUserDto) {
+  async update(@Param('id') params: string, @Body() dto: UpdateUserDto) {
     const updatedUser = await this.userService.updateUser(params, dto);
     return {
       status: 200,
@@ -50,7 +50,7 @@ export class AuthController {
   @Delete(':id')
   @Roles(UserRole.ADMIN)
   @UseGuards(AccessTokenGuard, RolesGuard)
-  async deleteUser(@Param('id') userId: number) {
+  async deleteUser(@Param('id') userId: string) {
     const deletedUser = await this.userService.deleteUser(userId);
     return {
       status: 200,

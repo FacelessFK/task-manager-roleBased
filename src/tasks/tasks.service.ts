@@ -5,6 +5,7 @@ import { Like, Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { title } from 'process';
 import { SortRequestDto } from 'src/common/dtos/sort.dto';
+import { currentUserDto } from 'src/users/dto/currentUserDto';
 
 @Injectable()
 export class TasksService {
@@ -12,7 +13,8 @@ export class TasksService {
     @InjectRepository(Tasks)
     private readonly taskRepo: Repository<Tasks>,
   ) {}
-  async createTask(task: CreateTaskDto, user: any) {
+  async createTask(task: CreateTaskDto, user: currentUserDto) {
+    const { id } = user;
     const newTask = this.taskRepo.create({
       ...{ title: task.title, priority: task.priority },
       user: { id: user.id },
@@ -30,7 +32,7 @@ export class TasksService {
     if (!tasks) throw new Error('Tasks not found');
     return tasks;
   }
-  async getUserTasks(user: any, sortTask: SortRequestDto) {
+  async getUserTasks(user: currentUserDto, sortTask: SortRequestDto) {
     const { sortType, sort } = sortTask;
     const order = {};
     order[sort] = sortType;
@@ -46,7 +48,7 @@ export class TasksService {
     if (!tasks) throw new Error('Tasks not found');
     return tasks;
   }
-  async getUserTask(user: any, taskId: any) {
+  async getUserTask(user: currentUserDto, taskId: string) {
     console.log(user.id);
 
     const task = await this.taskRepo.findOne({
@@ -60,7 +62,11 @@ export class TasksService {
     if (!task) throw new Error('Task not found');
     return task;
   }
-  async uploadFileTask(taskId, file: Express.Multer.File, user: any) {
+  async uploadFileTask(
+    taskId: string,
+    file: Express.Multer.File,
+    user: currentUserDto,
+  ) {
     const oldTask = await this.taskRepo.findOne({
       where: {
         id: taskId,
@@ -76,7 +82,11 @@ export class TasksService {
     });
     return await this.taskRepo.save(oldTask);
   }
-  async uploadTaskImage(taskId, file: Express.Multer.File, user: any) {
+  async uploadTaskImage(
+    taskId: string,
+    file: Express.Multer.File,
+    user: currentUserDto,
+  ) {
     console.log(file);
     const oldTask = await this.taskRepo.findOne({
       where: {
@@ -93,7 +103,11 @@ export class TasksService {
     });
     return await this.taskRepo.save(oldTask);
   }
-  async updateTask(taskId, updateTask: CreateTaskDto, user: any) {
+  async updateTask(
+    taskId: string,
+    updateTask: CreateTaskDto,
+    user: currentUserDto,
+  ) {
     const oldTask = await this.taskRepo.findOne({
       where: {
         id: taskId,
@@ -112,7 +126,7 @@ export class TasksService {
     return await this.taskRepo.save(oldTask);
   }
 
-  async deleteTask(taskId: any, user: any) {
+  async deleteTask(taskId: string, user: currentUserDto) {
     // console.log(user);
     console.log(taskId);
 
@@ -128,7 +142,7 @@ export class TasksService {
     return await this.taskRepo.remove(task);
   }
 
-  async searchUserTasks(user: any, search: { title: string }) {
+  async searchUserTasks(user: currentUserDto, search: { title: string }) {
     const task = await this.taskRepo.find({
       where: {
         title: Like(`%${search.title}%`),

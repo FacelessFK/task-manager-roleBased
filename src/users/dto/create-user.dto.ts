@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsOptional, MaxLength, MinLength } from 'class-validator';
 
 export class RegisterDto {
-  id: number;
+  id: string;
   @IsNotEmpty({ message: 'please add a username' })
   @MinLength(4)
   @MaxLength(20)
