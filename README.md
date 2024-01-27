@@ -27,10 +27,13 @@
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## TODO
-Refactoring - 
-add swagger
+Refactoring 
 
-
+## endpoint 
+```bash
+# endpoint
+localhost:8000/api/v1
+```
 
 ## Installation
 
